@@ -1,8 +1,10 @@
-from django.shortcuts import render
+from django.shortcuts import get_object_or_404, render
+from .models import Cliente, PedidoCompra, Produto, Marca, Fornecedor, Estoque, Secao, CabecarioPedido, ItensPedido, Cobranca, Usuario, Cidade
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from .serializers import ClienteSerializer, PedidoCompraSerializer, ProdutoSerializer, MarcaSerializer, FornecedorSerializer, EstoqueSerializer, SecaoSerializer, CabecarioPedidoSerializer, ItensPedidoSerializer, CobrancaSerializer, UsuarioSerializer, CidadeSerializer
 
 # As Views criadas a baixo listam os registros de cada tabela no banco de dados através dos modelos criados no models.py
-from .models import Cliente, PedidoCompra, Produto, Marca, Fornecedor, Estoque, Secao, CabecarioPedido, ItensPedido, Cobranca, Usuario, Cidade
-
 def listar_clientes(request):
     clientes = Cliente.objects.all()
     return render(request, 'lista_clientes.html', {'clientes': clientes})
@@ -52,4 +54,33 @@ def lista_cidades(request):
     return render(request, 'lista_cidades.html',{'cidades': cidades})
 
 # As Views criadas a baixo gravam os dados informados pelo usuario
+@csrf_exempt
+def criar_cliente(request):
+    if request.method == 'POST':
+        serializer = ClienteSerializer(data=request.POST)
+        if serializer.is_valid():
+            serializer.save()
+            return JsonResponse(serializer.data, status=201)
+        return JsonResponse(serializer.errors, status=400)
+
+@csrf_exempt
+def criar_pedido_compra(request):
+    if request.method == 'POST':
+        serializer = PedidoCompraSerializer(data=request.POST)
+        if serializer.is_valid():
+            serializer.save()
+            return JsonResponse(serializer.data, status=201)
+        return JsonResponse(serializer.errors, status=400)
+
+@csrf_exempt
+def criar_produto(request):
+    if request.method == 'POST':
+        serializer = ProdutoSerializer(data=request.POST)
+        if serializer.is_valid():
+            serializer.save()
+            return JsonResponse(serializer.data, status=201)
+        return JsonResponse(serializer.errors, status=400)
+
+# Adicione as views restantes para os outros modelos...
+
 
